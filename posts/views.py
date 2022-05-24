@@ -6,7 +6,7 @@ from .permissions import CustomReadOnly
 from .serializers import PostSerializer, PostCreateSerializer
 
 # Create your views here.
-class PostViewSet(ciewsets.ModelViewSet) :
+class PostViewSet(viewsets.ModelViewSet) :
     queryset = Post.objects.all()
     permission_classes = [CustomReadOnly]
 
@@ -18,4 +18,4 @@ class PostViewSet(ciewsets.ModelViewSet) :
     def perform_create(self, serializer) :
         profile = Profile.objects.get(user = self.request.user)
         serializer .save(author = self.request.user, profile = profile)
-        
+
