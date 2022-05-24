@@ -2,13 +2,16 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 
-from .serializers import RegisterSerializer
+from .serializers import LoginSerializer, RegisterSerializer
 
 # Create your views here.
 class RegisterView(generics.CreateAPIView) :
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+    
     def post(self, request) :
         serializer = self.get_serializer(data = request.data)
         serializer.is_valid(raise_exception = True)
