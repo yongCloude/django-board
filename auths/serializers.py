@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
+from django.contrib.auth import authenticate
 
 
 class RegisterSerializer(serializers.ModelSerializer) :
@@ -41,4 +42,16 @@ class RegisterSerializer(serializers.ModelSerializer) :
         token = Token.objects.create(user = user)
         return user
 
+class LoginSerializer(serializers.Serializer) :
+    username = serializers.CharField(required = True)
+    password = serializers.CharField(required = True, write_only = True)
+
+    def validate(self, data) :
+        user = authenticate(** data) 
+        if user :
+            token = Token.objects.get(user = user)
+            return token
+        raise serializers.ValidationError(
+            {"error" : "Unable to log in with provided credentials."}
+        )
         
