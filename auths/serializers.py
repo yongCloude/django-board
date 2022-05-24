@@ -24,11 +24,23 @@ class ResisterSerializer(serializers.ModelSerializer) :
         modle = User
         fields = ('username', 'password', 'password2', 'email')
 
-        def validate(self, data) :
-            if data['password '] != data['password2'] :
-                raise serializers.ValidationError(
-                    {"password" : "Password fields didn't match."}
-                )
+    def validate(self, data) :
+        if data['password '] != data['password2'] :
+            raise serializers.ValidationError(
+                {"password" : "Password fields didn't match."}
+            )
 
-            return data
-            
+        return data
+
+    def create(self, validated_data) :
+        user = User.objects.create_user(
+            username = validated_data['username'],
+            email = validated_data['email']
+        )
+        
+        user.set_password(validated_data['password'])
+        user.save()
+        token = Token.objects.create(user = user)
+        return user
+
+        
