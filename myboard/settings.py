@@ -67,6 +67,10 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS' : [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    'DEFAULT_PAGING_CLASS' :
+        'rest_framework.pagination.PageNumberPagination',
+        'PAGE_SIZE' :
+        3,
 }
 
 ROOT_URLCONF = 'myboard.urls'
