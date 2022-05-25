@@ -5,10 +5,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 from auths.models import Profile
-from .models import Post
+from .models import Post, Comment
 from .permissions import CustomReadOnly
-from .serializers import PostSerializer, PostCreateSerializer
+from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet) :
@@ -37,3 +38,17 @@ def like_post(request, pk) :
         post.likes.add(request.user)
 
     return Response({'status' : 'ok'})
+
+
+class CommentViewSet(viewsets.ModelViewSet) :
+    queryset = Comment.objects.all()
+    permission_classes = [CustomReadOnly]
+
+    def get_serializer_class(self) :
+        if self.action == 'list' or 'retrieve' :
+            return CommentSerializer
+        return CommentCreateSerializer
+    
+    def perform_create(self, serializer) :
+        profile = Profile.objects.get(user = self.request.user)
+        serializer.save(author = self.request.user, profile = profile)
